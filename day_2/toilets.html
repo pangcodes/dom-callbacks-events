@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Toilets</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.js"></script>
+</head>
+
+<body>
+    <!-- Do your HTML elements here -->
+    <h1>Public Toilets in Australia</h1>
+    <div id="content">
+    </div>
+
+
+    <script>
+        //let contentDiv = document.querySelect("#content");
+        let contentDiv = document.getElementById("content");
+
+        function displayData(data) {
+            // Your code here to display data on the page
+            data.forEach((toilet) => {
+                let toiletDiv = document.createElement("div");
+                toiletDiv.classList.add("toilet");
+                let nameP = document.createElement("p");
+                nameP.textContent = toilet.Name;
+
+                let addressDiv = document.createElement("div");
+                addressDiv.classList.add("address");
+                addressDiv.innerHTML = `<p><i>${toilet.Address1}</i></p><p><i>${toilet.Town} ${toilet.State}</i></p>`;
+
+                toiletDiv.appendChild(nameP);
+                toiletDiv.appendChild(addressDiv);
+                contentDiv.appendChild(toiletDiv);
+
+            })
+        }
+
+        function arrangeDataByState(data) {
+            // You can use this function to implement the bonus challenge
+            let dataByState = {};
+            data.forEach((toilet) => {
+                let state = toilet.State;
+                let entry = {name: toilet.Name, address: toilet.Address1, town: toilet.Town};
+                dataByState.hasOwnProperty(state) 
+                ? dataByState[state].push(entry) 
+                : dataByState[state] = [entry]
+            })
+
+            return dataByState;
+        }
+
+        function displayDataByState(data) {
+            // You can use this function to implement the bonus challenge
+            const toiletsByState = arrangeDataByState(data);
+            //console.log(toiletsByState);
+
+            Object.entries(toiletsByState).forEach(([state, toilets]) => {
+
+                let stateDiv = document.createElement("div");
+                stateDiv.classList.add("state");
+
+                let stateH = document.createElement("h2");
+                stateH.textContent = state;
+                stateDiv.appendChild(stateH);
+
+                toilets.forEach((toilet) => {
+                    let toiletDiv = document.createElement("div");
+                    toiletDiv.classList.add("toilet");
+                    let nameP = document.createElement("p");
+                    nameP.textContent = toilet.name;
+
+                    let addressDiv = document.createElement("div");
+                    addressDiv.classList.add("address");
+                    addressDiv.innerHTML = `<p><i>${toilet.address}</i></p><p><i>${toilet.town}</i></p>`;
+
+                    toiletDiv.appendChild(nameP);
+                    toiletDiv.appendChild(addressDiv);
+                    stateDiv.appendChild(toiletDiv);
+                })
+
+                contentDiv.appendChild(stateDiv);
+            });
+
+        }
+
+        Papa.parse("https://data.gov.au/data/dataset/553b3049-2b8b-46a2-95e6-640d7986a8c1/resource/34076296-6692-4e30-b627-67b7c4eb1027/download/toiletmapexport_200702_111356.csv", {
+            download: true,
+            header: true,
+            complete: function (results) {
+                // To see the data that a public toilet has in this API, 
+                // check the browser console!
+                // console.log(results.data);
+            
+                // implement your solution in the displayData function
+                //displayData(results.data);
+
+                // bonus
+                displayDataByState(results.data);
+              
+            }
+        });
+
+    </script>
+</body>
+
+</html>
